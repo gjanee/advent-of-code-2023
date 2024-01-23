@@ -152,6 +152,7 @@ R, C = len(grid), len(grid[0])  # grid dimensions
 N, S, E, W = 0b0001, 0b0010, 0b0100, 0b1000  # connection directions
 
 connections = {
+    ".": 0,
     "|": N|S,
     "-": E|W,
     "F": S|E,
@@ -174,10 +175,10 @@ def moves(r, c):
 sr = next(filter(lambda r: "S" in grid[r], range(R)))
 sc = grid[sr].index("S")
 grid[sr][sc] = snoitcennoc[
-    (connections[grid[sr-1][  sc]]&S if sr > 0   else 0) |
-    (connections[grid[sr+1][  sc]]&N if sr < R-1 else 0) |
-    (connections[grid[  sr][sc-1]]&E if sc > 0   else 0) |
-    (connections[grid[  sr][sc+1]]&W if sc < C-1 else 0)
+    (N if sr > 0   and connections[grid[sr-1][  sc]]&S else 0) |
+    (S if sr < R-1 and connections[grid[sr+1][  sc]]&N else 0) |
+    (E if sc < C-1 and connections[grid[  sr][sc+1]]&W else 0) |
+    (W if sc > 0   and connections[grid[  sr][sc-1]]&E else 0)
 ]
 
 loop = [(sr, sc), moves(sr, sc)[0]]
