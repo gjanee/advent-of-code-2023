@@ -389,11 +389,17 @@ print(num_pulses["L"] * num_pulses["H"])
 # BZ ---> DL ---+
 #
 # The code below simulates pressing the button just until all four
-# counters have triggered.
+# counters have triggered.  For slightly more input generality we
+# avoid hard-coding the names of the {ZP, NX, DJ, BZ} conjunctions
+# above and instead discover them by traversing backwards from rx.
+# But fundamentally we are relying on the analysis above.
 
 from math import lcm
 
-cycle_len = {"zp": None, "nx": None, "dj": None, "bz": None}
+zh = next(filter(lambda m: m.dests == ["rx"], Module.all.values()))
+zp_etc = [list(Module[name].inputs)[0] for name in zh.inputs]
+
+cycle_len = {name: None for name in zp_etc}
 num_presses = 0
 
 def hook(self):

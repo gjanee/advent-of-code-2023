@@ -110,7 +110,9 @@
 # form a closed loop.  Every concave vertex must therefore be paired
 # with an additional convex vertex.  Thus the 4 required convex
 # vertices add 4*3/4 = 3 to the area, while the remaining vertices
-# add, on average, 1/2 tile to the area each.
+# add, on average, 1/2 tile to the area each.  (This calculation
+# assumes that adjacent edges are not collinear, i.e., that vertices
+# always indicate turns.)
 
 directives = []
 colors = []
@@ -126,10 +128,16 @@ def to_polygon(directives):
     dirs = {"R": (1, 0), "L": (-1, 0), "U": (0, 1), "D": (0, -1)}
     vertices = [(0, 0)]
     r, c = 0, 0
-    for d, n in directives[:-1]:
+    for i, (d, n) in enumerate(directives[:-1]):
         r += dirs[d][0]*n
         c += dirs[d][1]*n
-        vertices.append((r, c))
+        if d != directives[i+1][0]:  # if at turn
+            vertices.append((r, c))
+    if directives[0][0] == directives[-1][0]:
+        # If the first and last directions are the same, then the
+        # first and last edges are collinear and the starting vertex
+        # can be eliminated.
+        del vertices[0]
     return vertices
 
 def area(vertices):

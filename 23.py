@@ -155,7 +155,7 @@ while len(todo) > 0:
     from_node.edges.add((to_node, dist))
     for next_loc in next_locs:
         dr, dc = next_loc[0]-loc[0], next_loc[1]-loc[1]
-        if grid[next_loc] == movable_dirs[dr+1][dc+1]:
+        if grid[next_loc] in [".", movable_dirs[dr+1][dc+1]]:
             todo.append((to_node, next_loc))
 
 def longest_path_length():
